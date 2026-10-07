@@ -11,4 +11,3 @@ Decisions that are not made yet. Move each one into an ADR when it is decided.
 7. **Batch consistency:** should one mapping always be shared across a folder, or should it be configurable per run?
 8. **Licensing:** which license for the repo, and are all chosen models' licenses compatible with how the tool will be distributed and hosted?
 9. **Hosted version:** what shape — a self-hostable server, a SaaS, or both? Affects auth, storage and which providers are allowed.
-10. **Type checker:** mypy or pyright?

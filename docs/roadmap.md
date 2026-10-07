@@ -5,7 +5,7 @@ Providers come before local runtime management: the whole pipeline can be built 
 ## M0 – Repo setup
 
 - [ ] uv workspace with `packages/docveil-llm`, `packages/docveil-core`, `packages/docveil`
-- [ ] ruff, type checker, pytest configured at the root
+- [ ] ruff, mypy, pytest configured at the root
 - [ ] CI (GitHub Actions): lint, type check, tests on macOS and Linux
 - [ ] `tests/eval/` skeleton with a first handful of labelled synthetic documents
 

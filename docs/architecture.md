@@ -126,4 +126,4 @@ docveil scrub report.docx
 | NER | GLiNER (optional extra) |
 | Fake names | Faker |
 | Tests | pytest, pytest-asyncio, respx (HTTP mocking) |
-| Lint / types | ruff, mypy or pyright |
+| Lint / types | ruff, mypy ([ADR 0005](decisions/0005-mypy-type-checker.md)) |

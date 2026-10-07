@@ -26,3 +26,4 @@ These docs describe the planned implementation. They are working documents: upda
 | [0002](decisions/0002-three-package-workspace.md) | Three packages in one uv workspace |
 | [0003](decisions/0003-openai-compatible-adapter-first.md) | One OpenAI-compatible adapter covers most providers |
 | [0004](decisions/0004-async-core-io-free.md) | Async, I/O-free core that is ready to be hosted |
+| [0005](decisions/0005-mypy-type-checker.md) | mypy as the type checker |
