@@ -35,7 +35,7 @@ Default output names: `report.docx` → `report.clean.docx`; a folder `reports/`
 
 ## Mappings across files
 
-See [ADR 0008](../decisions/0008-batch-mapping-scope.md).
+See [requirements](../requirements.md#replacement-and-mappings).
 
 | You run | Result |
 |---|---|

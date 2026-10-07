@@ -2,7 +2,7 @@
 
 All anonymization logic. Receives a ready `LLMProvider` (or none, for rules + NER only) and a config, and turns a document into an anonymized document.
 
-It does no terminal I/O and does not know how the provider was created. See [ADR 0004](../decisions/0004-async-core-io-free.md).
+It does no terminal I/O and does not know how the provider was created. See [requirements](../requirements.md#architecture).
 
 ## Public API
 
@@ -67,7 +67,7 @@ class Detector(Protocol):
 
 #### Languages and locale packs
 
-English and Swedish are supported from the start ([ADR 0007](../decisions/0007-languages-en-sv.md)). Language-neutral rules (email, URL, IP, IBAN, cards) are shared. Country-specific rules live in locale packs under `detect/rules/locales/`:
+English and Swedish are supported from the start ([requirements](../requirements.md#languages)). Language-neutral rules (email, URL, IP, IBAN, cards) are shared. Country-specific rules live in locale packs under `detect/rules/locales/`:
 
 | Pack | Covers |
 |---|---|
@@ -78,7 +78,7 @@ All configured packs run on every document.
 
 #### LLM output
 
-The LLM returns entity **strings and types**, never offsets or rewritten text ([ADR 0001](../decisions/0001-llm-detects-code-replaces.md)):
+The LLM returns entity **strings and types**, never offsets or rewritten text ([requirements](../requirements.md#detection)):
 
 ```json
 {"entities": [{"text": "Anna Berg", "type": "PERSON", "aliases": ["Anna", "Ms. Berg"]}]}
@@ -98,7 +98,7 @@ The LLM returns entity **strings and types**, never offsets or rewritten text ([
 | `generic` | "Person A", "Company B" |
 | `fake` (later, opt-in) | Realistic fake names from Faker, consistent per entity |
 
-- The **mapping** (entity → placeholder) is shared across chunks and, by default, across all files in a run ([ADR 0008](../decisions/0008-batch-mapping-scope.md)). `mapping_scope = "file"` gives each file its own mapping.
+- The **mapping** (entity → placeholder) is shared across chunks and, by default, across all files in a run ([requirements](../requirements.md#replacement-and-mappings)). `mapping_scope = "file"` gives each file its own mapping.
 - Mappings are stored through a `MappingStore` protocol: an in-memory store by default, `FileMappingStore` when the user asks to keep the mapping, and a database store for the server later.
 - The mapping is not written to disk unless the user asks. Usually the original document is kept, so the mapping is not needed. A saved mapping is plain JSON for now; storing it safely is up to the user (see [privacy.md](../privacy.md#mappings)).
 

@@ -56,7 +56,7 @@ Transient errors (connection, rate limit) are retried with backoff inside the pr
 
 ## Provider adapters
 
-See [ADR 0003](../decisions/0003-openai-compatible-adapter-first.md).
+See [requirements](../requirements.md#llm-access).
 
 | Adapter | Covers |
 |---|---|
@@ -88,7 +88,7 @@ Installed with the `[local]` extra. Only imported when local mode is used.
 
 ### `ensure_local()`
 
-See [ADR 0006](../decisions/0006-local-runtimes.md). docveil uses whatever local runtime it can, and starts it itself when possible.
+See [requirements](../requirements.md#local-runtimes). docveil uses whatever local runtime it can, and starts it itself when possible.
 
 1. **Use a running server** (`runtimes/detect.py`): if LM Studio, `llama-server` or Ollama answers on its default localhost port, return a provider for it.
 2. **Probe hardware** (`hardware.py`): total and available RAM, CPU, Apple Silicon unified memory, GPU, free disk space.

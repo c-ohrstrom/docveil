@@ -2,7 +2,7 @@
 
 ## Packages
 
-The project is one GitHub repo containing three Python packages in a [uv workspace](https://docs.astral.sh/uv/concepts/projects/workspaces/). See [ADR 0002](decisions/0002-three-package-workspace.md).
+The project is one GitHub repo containing three Python packages in a [uv workspace](https://docs.astral.sh/uv/concepts/projects/workspaces/). See [requirements](requirements.md#architecture).
 
 | PyPI package | Import name | Responsibility |
 |---|---|---|
@@ -125,9 +125,9 @@ docveil scrub report.docx
 | HTTP | httpx (async) |
 | CLI | Typer + Rich |
 | Hardware | psutil, `sysctl` on macOS; pynvml later |
-| Local models | llama.cpp (`llama-server`), MLX (`mlx-lm`), huggingface_hub for downloads ([ADR 0006](decisions/0006-local-runtimes.md)) |
+| Local models | llama.cpp (`llama-server`), MLX (`mlx-lm`), huggingface_hub for downloads ([requirements](requirements.md#local-runtimes)) |
 | Documents | python-docx, PyMuPDF |
 | NER | GLiNER (optional extra) |
 | Fake names | Faker (later) |
 | Tests | pytest, pytest-asyncio, respx (HTTP mocking) |
-| Lint / types | ruff, mypy ([ADR 0005](decisions/0005-mypy-type-checker.md)) |
+| Lint / types | ruff, mypy (strict) |

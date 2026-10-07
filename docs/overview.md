@@ -12,11 +12,11 @@ Reports, articles and other documents often contain names, organisations, places
 - Preserve the document: formatting, structure and all non-identifying text stay unchanged.
 - Be usable as a **Python library**, through a **CLI**, and later as a **hosted service**.
 - Support `.txt`, `.md`, `.docx` and text-based `.pdf`.
-- Support English and Swedish documents from the start ([ADR 0007](decisions/0007-languages-en-sv.md)).
+- Support English and Swedish documents from the start ([requirements](requirements.md#languages)).
 
 ## First iteration
 
-The first target is the CLI running fully locally on a MacBook with Apple Silicon. Linux, NVIDIA GPUs and the hosted service come later, but the design keeps them possible (see [ADR 0004](decisions/0004-async-core-io-free.md)).
+The first target is the CLI running fully locally on a MacBook with Apple Silicon. Linux, NVIDIA GPUs and the hosted service come later, but the design keeps them possible (see [requirements](requirements.md#architecture)).
 
 For hosting, the expected order is a self-hostable server first and a managed service, if any, later. This is not decided yet; see [open questions](open-questions.md).
 
@@ -29,7 +29,7 @@ For hosting, the expected order is a self-hostable server first and a managed se
 
 ## Guiding principles
 
-1. **The LLM detects, code replaces.** The model never rewrites the document. See [ADR 0001](decisions/0001-llm-detects-code-replaces.md).
+1. **The LLM detects, code replaces.** The model never rewrites the document. See [requirements](requirements.md#detection).
 2. **Several detection layers.** Rules, a small NER model and an LLM complement each other; the LLM is not the only safety net.
 3. **Recall over precision.** A missed name is a leak; an unnecessary replacement is an inconvenience. Tune and measure for recall.
 4. **Consistency.** The same entity gets the same placeholder throughout a document (and across a batch).
