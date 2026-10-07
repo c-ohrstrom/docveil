@@ -6,12 +6,19 @@ Reports, articles and other documents often contain names, organisations, places
 
 ## Goals
 
-- Detect identifying information in documents and replace it with consistent placeholders (`[PERSON_1]`, "Person A", or realistic fake names).
+- Detect identifying information in documents and replace it with consistent placeholders (`[PERSON_1]`, "Person A", and later realistic fake names as an opt-in).
 - Run **fully locally** by default: the tool checks the machine's capabilities, picks a suitable local model, downloads it and starts it.
 - Allow **remote LLM providers** (OpenAI, Anthropic, any OpenAI-compatible API) as an explicit opt-in.
 - Preserve the document: formatting, structure and all non-identifying text stay unchanged.
 - Be usable as a **Python library**, through a **CLI**, and later as a **hosted service**.
 - Support `.txt`, `.md`, `.docx` and text-based `.pdf`.
+- Support English and Swedish documents from the start ([ADR 0007](decisions/0007-languages-en-sv.md)).
+
+## First iteration
+
+The first target is the CLI running fully locally on a MacBook with Apple Silicon. Linux, NVIDIA GPUs and the hosted service come later, but the design keeps them possible (see [ADR 0004](decisions/0004-async-core-io-free.md)).
+
+For hosting, the expected order is a self-hostable server first and a managed service, if any, later. This is not decided yet; see [open questions](open-questions.md).
 
 ## Non-goals (for now)
 

@@ -24,8 +24,10 @@ Remote providers are allowed, but only as an explicit choice:
 
 ## Mappings
 
-- A mapping file reveals the original data. Saving it is opt-in.
-- Mappings should be encrypted at rest (passphrase or keychain-stored key).
+- A mapping file reveals the original data. It is only written when the user asks (`--mapping PATH`); otherwise it is kept in memory and discarded.
+- Usually the original document is kept, so the mapping is rarely needed.
+- In the first version a saved mapping is plain JSON, and the CLI warns that it contains original values. Storing or encrypting it is up to the user.
+- Built-in encryption is deferred; see [open questions](open-questions.md).
 - The default output never contains original values.
 
 ## Logging

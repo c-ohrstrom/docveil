@@ -18,19 +18,34 @@ Built with Typer and Rich. The command is `docveil`; the import name is `docveil
 ```
 docveil doctor                        # hardware, chosen tier, runtime and model status
 docveil setup                         # prepare runtime and model ahead of time
-docveil scrub FILE [-o OUT]           # anonymize one file
+docveil scrub PATH... [-o OUT]       # anonymize files and/or folders
+      [--recursive]                   #   include subfolders
       [--review]                      #   accept/reject entities before applying
-      [--style tag|generic|fake]
+      [--style tag|generic]           #   fake later
       [--types PERSON,ORG,...]
-      [--provider SPEC]               #   e.g. anthropic:<model>
+      [--provider SPEC]               #   e.g. lmstudio:<model>, anthropic:<model>
       [--allow-remote]
-      [--save-mapping PATH]
-docveil scrub DIR --recursive         # batch; one shared mapping
+      [--per-file]                    #   separate mapping per file
+      [--mapping PATH]                #   load/save the mapping to continue across runs
 docveil restore FILE --mapping PATH   # reverse using a saved mapping
 docveil models list|pull|use          # manage local models
 ```
 
-Default output name: `report.docx` → `report.clean.docx`.
+Default output names: `report.docx` → `report.clean.docx`; a folder `reports/` → `reports.clean/` with the same structure.
+
+## Mappings across files
+
+See [ADR 0008](../decisions/0008-batch-mapping-scope.md).
+
+| You run | Result |
+|---|---|
+| `docveil scrub a.docx b.docx` or `docveil scrub reports/` | **One mapping for the whole run.** "Anna Berg" is `[PERSON_1]` in every file. |
+| `… --per-file` | Each file has its own mapping. "Anna Berg" may be `[PERSON_1]` in one file and `[PERSON_3]` in another. |
+| `… --mapping project.json` | The mapping is loaded from `project.json` if it exists and saved back after the run, so later runs continue the numbering. |
+
+- Files are processed in sorted path order, so numbering is the same each time.
+- Without `--mapping`, the mapping is kept in memory only and discarded after the run.
+- A saved mapping contains the original values. It is plain JSON for now; keep it somewhere safe (see [privacy.md](../privacy.md#mappings)).
 
 ## Wiring (sketch)
 

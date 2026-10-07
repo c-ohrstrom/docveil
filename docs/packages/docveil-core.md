@@ -61,9 +61,22 @@ class Detector(Protocol):
 
 | Detector | Finds | Notes |
 |---|---|---|
-| `rules` | Email, phone, URL, IP, IBAN, card numbers (Luhn), national ID numbers, dates | Regex plus checksums; always on |
-| `ner` | Person, organisation, location | GLiNER (optional extra), runs on CPU |
+| `rules` | Email, phone, URL, IP, IBAN, card numbers (Luhn), national ID numbers, postal codes, dates (only when `DATE` is enabled) | Regex plus checksums; always on |
+| `ner` | Person, organisation, location | Multilingual GLiNER (optional extra), runs on CPU |
 | `llm` | Context-dependent and indirect identifiers, aliases | Uses `complete_json` with a schema; skipped if no provider |
+
+#### Languages and locale packs
+
+English and Swedish are supported from the start ([ADR 0007](../decisions/0007-languages-en-sv.md)). Language-neutral rules (email, URL, IP, IBAN, cards) are shared. Country-specific rules live in locale packs under `detect/rules/locales/`:
+
+| Pack | Covers |
+|---|---|
+| `en` | UK and US phone formats, postcodes and ZIP codes, common ID formats (e.g. US SSN, UK NI number) |
+| `sv` | Personnummer and samordningsnummer (Luhn), organisationsnummer, Swedish phone numbers, postnummer |
+
+All configured packs run on every document.
+
+#### LLM output
 
 The LLM returns entity **strings and types**, never offsets or rewritten text ([ADR 0001](../decisions/0001-llm-detects-code-replaces.md)):
 
@@ -83,11 +96,11 @@ The LLM returns entity **strings and types**, never offsets or rewritten text ([
 |---|---|
 | `tag` (default) | `[PERSON_1]`, `[ORG_2]` |
 | `generic` | "Person A", "Company B" |
-| `fake` | Realistic fake names from Faker, consistent per entity |
+| `fake` (later, opt-in) | Realistic fake names from Faker, consistent per entity |
 
-- The **mapping** (entity → placeholder) is shared across chunks and, in batch mode, across documents.
-- Mappings are stored through a `MappingStore` protocol: `FileMappingStore` now, a database store for the server later.
-- Writing the mapping is opt-in and should be encrypted (it reveals the original data).
+- The **mapping** (entity → placeholder) is shared across chunks and, by default, across all files in a run ([ADR 0008](../decisions/0008-batch-mapping-scope.md)). `mapping_scope = "file"` gives each file its own mapping.
+- Mappings are stored through a `MappingStore` protocol: an in-memory store by default, `FileMappingStore` when the user asks to keep the mapping, and a database store for the server later.
+- The mapping is not written to disk unless the user asks. Usually the original document is kept, so the mapping is not needed. A saved mapping is plain JSON for now; storing it safely is up to the user (see [privacy.md](../privacy.md#mappings)).
 
 ### 6. Verification (optional)
 
@@ -100,6 +113,8 @@ Initial set, configurable:
 
 `PERSON`, `ORG`, `LOCATION`, `ADDRESS`, `EMAIL`, `PHONE`, `URL`, `IP`, `ID_NUMBER`, `FINANCIAL`, `DATE` (off by default), `OTHER`.
 
+Dates are rare in the expected documents and replacing them hurts readability, so `DATE` is off by default and can be enabled in config. Dates inside other identifiers (e.g. the birth date in a personnummer) are covered by that identifier's rule.
+
 ## Config
 
 TOML, loaded with pydantic-settings; CLI options override it.
@@ -108,11 +123,11 @@ TOML, loaded with pydantic-settings; CLI options override it.
 [detect]
 types = ["PERSON", "ORG", "LOCATION", "EMAIL", "PHONE", "ID_NUMBER"]
 detectors = ["rules", "ner", "llm"]
-language = "auto"
+languages = ["en", "sv"]
 
 [replace]
-style = "tag"            # tag | generic | fake
-save_mapping = false
+style = "tag"            # tag | generic (fake later)
+mapping_scope = "run"    # run | file
 
 [verify]
 enabled = true
@@ -120,4 +135,4 @@ enabled = true
 
 ## Evaluation
 
-`tests/eval/` at the repo root holds 20–50 synthetic documents (including non-English, e.g. Swedish) with labelled entities. A scorer reports recall and precision per entity type and per detector. It is used to compare models, prompts and detector combinations.
+`tests/eval/` at the repo root holds 20–50 synthetic documents in English and Swedish with labelled entities. A scorer reports recall and precision per entity type, per detector and per language. It is used to compare models, prompts and detector combinations.

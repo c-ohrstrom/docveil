@@ -33,7 +33,7 @@ A fourth package, `docveil-server`, is planned later for hosting.
 2. **`docveil-core` depends only on the `LLMProvider` protocol** from `docveil-llm`. It never probes hardware, installs runtimes or reads API keys. It is handed a ready provider.
 3. **The CLI and the future server are the only composition roots.** They choose and prepare a provider, load config, and pass both to the core.
 4. **`docveil-core` does no terminal I/O.** No printing, no prompts. It reports progress through events and supports review through data (`analyze` → decisions → `apply`).
-5. **`docveil_llm.local` is only imported when local mode is used**, so hosted deployments do not need its dependencies (`psutil`, `pynvml`, …).
+5. **`docveil_llm.local` is only imported when local mode is used**, so hosted deployments do not need its dependencies (`psutil`, `huggingface_hub`, …).
 
 ## Two jobs in the LLM layer
 
@@ -53,14 +53,14 @@ docveil/                              # repo root
 ├── docs/                             # these planning docs
 ├── packages/
 │   ├── docveil-llm/
-│   │   ├── pyproject.toml            # extras: [local]
+│   │   ├── pyproject.toml            # extras: [local], [mlx]
 │   │   └── src/docveil_llm/
-│   │       ├── __init__.py           # get_provider("ollama:qwen3:8b")
+│   │       ├── __init__.py           # get_provider("lmstudio:<model>")
 │   │       ├── types.py              # Message, Capabilities, errors
 │   │       ├── provider.py           # LLMProvider protocol
 │   │       ├── spec.py               # parse provider strings
 │   │       ├── providers/
-│   │       │   ├── openai_compat.py  # Ollama, llama.cpp, LM Studio, vLLM, OpenAI, …
+│   │       │   ├── openai_compat.py  # llama.cpp, MLX, LM Studio, Ollama, vLLM, OpenAI, …
 │   │       │   └── anthropic.py
 │   │       └── local/
 │   │           ├── __init__.py       # ensure_local()
@@ -68,8 +68,11 @@ docveil/                              # repo root
 │   │           ├── registry.toml
 │   │           ├── selector.py
 │   │           └── runtimes/
-│   │               ├── ollama.py
-│   │               └── llamacpp.py   # later
+│   │               ├── detect.py     # find a running LM Studio / llama-server / Ollama
+│   │               ├── llamacpp.py   # start llama-server
+│   │               ├── mlx.py        # start mlx_lm.server (Apple Silicon)
+│   │               ├── lmstudio.py   # start via the lms CLI
+│   │               └── ollama.py     # start ollama serve
 │   ├── docveil-core/
 │   │   ├── pyproject.toml            # extras: [docx], [pdf], [ner]
 │   │   └── src/docveil_core/
@@ -121,9 +124,10 @@ docveil scrub report.docx
 | Data models / config | pydantic, pydantic-settings, TOML |
 | HTTP | httpx (async) |
 | CLI | Typer + Rich |
-| Hardware | psutil, pynvml, `sysctl` on macOS |
+| Hardware | psutil, `sysctl` on macOS; pynvml later |
+| Local models | llama.cpp (`llama-server`), MLX (`mlx-lm`), huggingface_hub for downloads ([ADR 0006](decisions/0006-local-runtimes.md)) |
 | Documents | python-docx, PyMuPDF |
 | NER | GLiNER (optional extra) |
-| Fake names | Faker |
+| Fake names | Faker (later) |
 | Tests | pytest, pytest-asyncio, respx (HTTP mocking) |
 | Lint / types | ruff, mypy ([ADR 0005](decisions/0005-mypy-type-checker.md)) |
